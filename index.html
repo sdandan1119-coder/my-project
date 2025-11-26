@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <title>ללמוד בקל</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        body {
+          margin: 0;
+          font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+          background: #f3f4f6;
+          color: #111827;
+        }
+
+        header {
+          background: linear-gradient(135deg, #6366f1, #0ea5e9);
+          color: white;
+          padding: 1.5rem 1rem;
+          text-align: center;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+          position: sticky;
+          top: 0;
+          z-index: 10;
+        }
+
+        header h1 {
+          margin: 0;
+          font-size: 1.8rem;
+        }
+
+        header p {
+          margin: 0.4rem 0 0;
+          font-size: 0.95rem;
+          opacity: 0.9;
+        }
+
+        main {
+          max-width: 1100px;
+          margin: 1.5rem auto;
+          padding: 0 1rem 2.5rem;
+        }
+
+        .card {
+          background: white;
+          border-radius: 0.85rem;
+          padding: 1.25rem;
+          box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+          margin-bottom: 1.25rem;
+        }
+
+        .card h2 {
+          margin-top: 0;
+          font-size: 1.2rem;
+        }
+
+        .form-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.75rem;
+          margin-bottom: 0.75rem;
+        }
+
+        label {
+          font-size: 0.85rem;
+          display: block;
+          margin-bottom: 0.25rem;
+          font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        select {
+          padding: 0.45rem 0.6rem;
+          border-radius: 0.5rem;
+          border: 1px solid #d1d5db;
+          min-width: 160px;
+          font-size: 0.9rem;
+          outline: none;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        select:focus {
+          border-color: #6366f1;
+          box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.2);
+        }
+
+        input[type="file"] {
+          font-size: 0.85rem;
+        }
+
+        button {
+          border: none;
+          border-radius: 999px;
+          padding: 0.5rem 1.1rem;
+          font-size: 0.9rem;
+          cursor: pointer;
+          transition: transform 0.05s ease, box-shadow 0.1s ease, background 0.15s ease;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.3rem;
+          white-space: nowrap;
+        }
+
+        button:active {
+          transform: scale(0.97);
+          box-shadow: none;
+        }
+
+        .btn-primary {
+          background: #6366f1;
+          color: white;
+          box-shadow: 0 1px 4px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn-primary:hover {
+          background: #4f46e5;
+        }
+
+        .btn-outline {
+          background: white;
+          color: #111827;
+          border: 1px solid #d1d5db;
+        }
+
+        .btn-outline.active {
+          background: #111827;
+          color: white;
+          border-color: #111827;
+        }
+
+        .btn-outline:hover {
+          background: #f3f4f6;
+        }
+
+        .btn-danger {
+          background: #fee2e2;
+          color: #b91c1c;
+          border: 1px solid #fecaca;
+          box-shadow: none;
+        }
+
+        .btn-danger:hover {
+          background: #fecaca;
+        }
+
+        .subjects-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+          gap: 0.6rem;
+          margin-top: 0.6rem;
+        }
+
+        .grades-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.4rem;
+          margin: 0.6rem 0 0.4rem;
+        }
+
+        .summary-list {
+          display: grid;
+          gap: 0.5rem;
+          margin-top: 0.8rem;
+        }
+
+        .summary-item {
+          border-radius: 0.65rem;
+          border: 1px solid #e5e7eb;
+          padding: 0.6rem 0.7rem;
+          background: #f9fafb;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 0.6rem;
+        }
+
+        .summary-actions {
+          display: flex;
+          gap: 0.4rem;
+          align-items: center;
+        }
+
+        .summary-meta {
+          font-size: 0.8rem;
+          color: #4b5563;
+        }
+
+        .empty-state {
+          font-size: 0.9rem;
+          color: #6b7280;
+          margin-top: 0.5rem;
+        }
+
+        .tag {
+          font-size: 0.75rem;
+          border-radius: 999px;
+          padding: 0.15rem 0.45rem;
+          background: #e0f2fe;
+          color: #0369a1;
+          margin-left: 0.3rem;
+        }
+
+        .note {
+          font-size: 0.8rem;
+          color: #6b7280;
+          margin-top: 0.4rem;
+        }
+
+        @media (max-width: 600px) {
+          header h1 {
+            font-size: 1.4rem;
+          }
+          .card {
+            padding: 1rem;
+          }
+          .summary-item {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>ללמוד בקל</h1>
+    <p>מעלים סיכום → בוחרים מקצוע, כיתה ורמה → לומדים למבחן בכיף 😎</p>
+</header>
+
+<main>
+    <!-- אזור מנהל + העלאת סיכום -->
+    <section class="card" id="upload-section">
+        <h2>אזור מנהל – העלאת סיכומים</h2>
+
+        <!-- טופס כניסת מנהל -->
+        <div id="adminLoginSection">
+            <form id="adminLoginForm" class="form-row">
+                <div>
+                    <label for="adminPasswordInput">סיסמת מנהל</label>
+                    <input id="adminPasswordInput" type="password" placeholder="הכנס סיסמה..." required />
+                </div>
+                <div style="display:flex;align-items:flex-end;">
+                    <button type="submit" class="btn-primary">כניסת מנהל</button>
+                </div>
+            </form>
+            <p class="note">
+                הערה: בקובץ כזה הסיסמה עדיין נמצאת בקוד, אבל לתרגול / פרויקט אישי זה מספיק.
+                לאבטחה אמיתית צריך שרת (כמו שהסברתי קודם).
+            </p>
+        </div>
+
+        <!-- טופס העלאת סיכום (מוסתר עד שהמנהל נכנס) -->
+        <form id="uploadForm" style="display:none;">
+            <div class="form-row">
+                <div>
+                    <label for="summaryFile">קובץ סיכום (Word / PDF)</label>
+                    <input id="summaryFile" type="file" accept=".doc,.docx,.pdf" required />
+                </div>
+
+                <div>
+                    <label for="summaryTitle">שם הסיכום / נושא</label>
+                    <input id="summaryTitle" type="text" placeholder="למשל: Present Simple – סיכום למבחן" required />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div>
+                    <label for="summarySubject">מקצוע</label>
+                    <select id="summarySubject" required>
+                        <option value="">בחר מקצוע…</option>
+                        <option>אנגלית</option>
+                        <option>מתמטיקה</option>
+                        <option>היסטוריה</option>
+                        <option>ספרות</option>
+                        <option>תנ&quot;ך</option>
+                        <option>פיזיקה</option>
+                        <option>כימיה</option>
+                        <option>ביולוגיה</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="summaryGrade">לכיתה</label>
+                    <select id="summaryGrade" required>
+                        <option value="">בחר כיתה…</option>
+                        <option>ז</option>
+                        <option>ח</option>
+                        <option>ט</option>
+                        <option>י</option>
+                        <option>י&quot;א</option>
+                        <option>י&quot;ב</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="summaryLevel">הקבצה / יחידות (אם רלוונטי)</label>
+                    <select id="summaryLevel">
+                        <option value="">ללא / לא רלוונטי</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary">הוסף סיכום</button>
+            <p class="note">
+                * הסיכומים נשמרים בדפדפן (localStorage) במחשב שבו אתה עובד.
+                במחשבים אחרים לא יראו את מה ששמרת, אלא אם תעביר להם קובץ אחר.
+            </p>
+        </form>
+    </section>
+
+    <!-- בחירת מקצוע וכיתה -->
+    <section class="card">
+        <h2>בחירת מקצוע, כיתה ורמה</h2>
+
+        <div>
+            <span style="font-size:0.9rem;">1. בחר מקצוע:</span>
+            <div id="subjectsContainer" class="subjects-grid"></div>
+        </div>
+
+        <div id="gradesContainerWrapper" style="margin-top:0.9rem;display:none;">
+            <span style="font-size:0.9rem;">2. בחר כיתה:</span>
+            <div id="gradesContainer" class="grades-row"></div>
+        </div>
+
+        <div id="levelContainerWrapper" style="margin-top:0.9rem;display:none;">
+            <span id="levelLabel" style="font-size:0.9rem;">3. בחר רמה:</span>
+            <div id="levelContainer" class="grades-row"></div>
+        </div>
+
+        <div id="currentSelection"
+             style="margin-top:0.6rem;font-size:0.85rem;color:#4b5563;display:none;">
+        </div>
+
+        <div id="summariesContainer" class="summary-list"></div>
+        <div id="emptyState" class="empty-state" style="display:none;"></div>
+    </section>
+</main>
+
+<script>
+    // ------------ הגדרת סיסמה ------------
+    const ADMIN_PASSWORD = "696000";
+
+    // ------------ נתונים בסיסיים ------------
+
+    const subjects = [
+      "אנגלית",
+      "מתמטיקה",
+      "היסטוריה",
+      "ספרות",
+      "תנ\"ך",
+      "פיזיקה",
+      "כימיה",
+      "ביולוגיה"
+    ];
+
+    const grades = ["ז", "ח", "ט", "י", "י\"א", "י\"ב"];
+
+    // summaries נטען מ-localStorage
+    const summaries = [];
+
+    let selectedSubject = null;
+    let selectedGrade = null;
+    let selectedLevel = null; // הקבצה / יחידות אם רלוונטי
+
+    let isAdmin = false;
+
+    // ------------ DOM ------------
+
+    const subjectsContainer = document.getElementById("subjectsContainer");
+    const gradesContainerWrapper = document.getElementById("gradesContainerWrapper");
+    const gradesContainer = document.getElementById("gradesContainer");
+
+    const levelContainerWrapper = document.getElementById("levelContainerWrapper");
+    const levelContainer = document.getElementById("levelContainer");
+    const levelLabel = document.getElementById("levelLabel");
+
+    const summariesContainer = document.getElementById("summariesContainer");
+    const emptyState = document.getElementById("emptyState");
+    const currentSelection = document.getElementById("currentSelection");
+
+    const adminLoginSection = document.getElementById("adminLoginSection");
+    const adminLoginForm = document.getElementById("adminLoginForm");
+    const adminPasswordInput = document.getElementById("adminPasswordInput");
+
+    const uploadForm = document.getElementById("uploadForm");
+    const summaryFileInput = document.getElementById("summaryFile");
+    const summaryTitleInput = document.getElementById("summaryTitle");
+    const summarySubjectSelect = document.getElementById("summarySubject");
+    const summaryGradeSelect = document.getElementById("summaryGrade");
+    const summaryLevelSelect = document.getElementById("summaryLevel");
+
+    // ------------ רמות: הקבצה / יחידות ------------
+
+    function getLevelConfig(subject, grade) {
+      const isMathOrEnglish = subject === "מתמטיקה" || subject === "אנגלית";
+      if (!isMathOrEnglish || !grade) return null;
+
+      // ח' + ט' – הקבצות א/ב/ג
+      if (grade === "ח" || grade === "ט") {
+        return {
+          type: "stream",
+          label: "3. בחר הקבצה:",
+          options: ["הקבצה א'", "הקבצה ב'", "הקבצה ג'"]
+        };
+      }
+
+      // י' + י"א + י"ב – 3/4/5 יחידות
+      if (grade === "י" || grade === "י\"א" || grade === "י\"ב") {
+        return {
+          type: "units",
+          label: "3. בחר מספר יחידות:",
+          options: ["3 יחידות", "4 יחידות", "5 יחידות"]
+        };
+      }
+
+      return null;
+    }
+
+    // upload: לעדכן אפשרויות רמה
+    function updateUploadLevelOptions() {
+      const subject = summarySubjectSelect.value;
+      const grade = summaryGradeSelect.value;
+      const config = getLevelConfig(subject, grade);
+
+      summaryLevelSelect.innerHTML = "";
+      const defaultOpt = document.createElement("option");
+      defaultOpt.value = "";
+      defaultOpt.textContent = "ללא / לא רלוונטי";
+      summaryLevelSelect.appendChild(defaultOpt);
+
+      if (!config) return;
+
+      config.options.forEach((opt) => {
+        const o = document.createElement("option");
+        o.value = opt;
+        o.textContent = opt;
+        summaryLevelSelect.appendChild(o);
+      });
+    }
+
+    summarySubjectSelect.addEventListener("change", updateUploadLevelOptions);
+    summaryGradeSelect.addEventListener("change", updateUploadLevelOptions);
+
+    // ------------ Admin UI ------------
+
+    function updateAdminView() {
+      if (isAdmin) {
+        adminLoginSection.style.display = "none";
+        uploadForm.style.display = "block";
+      } else {
+        adminLoginSection.style.display = "block";
+        uploadForm.style.display = "none";
+      }
+    }
+
+    adminLoginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const pwd = adminPasswordInput.value;
+      if (pwd === ADMIN_PASSWORD) {
+        isAdmin = true;
+        updateAdminView();
+        adminPasswordInput.value = "";
+        alert("נכנסת כאדמין ✔️");
+      } else {
+        alert("סיסמה שגויה ❌");
+      }
+    });
+
+    // ------------ שמירה וטעינה מ-localStorage ------------
+
+    function saveSummariesToStorage() {
+      try {
+        localStorage.setItem("summaries", JSON.stringify(summaries));
+      } catch (err) {
+        console.error("שמירה ל-localStorage נכשלה:", err);
+      }
+    }
+
+    function loadSummariesFromStorage() {
+      try {
+        const raw = localStorage.getItem("summaries");
+        if (!raw) return;
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) {
+          arr.forEach((item) => {
+            if (item && item.fileDataUrl && item.fileName) {
+              summaries.push(item);
+            }
+          });
+        }
+      } catch (err) {
+        console.error("טעינה מ-localStorage נכשלה:", err);
+      }
+    }
+
+    // המרה מ-dataURL ל-Blob בשביל הורדה
+    function dataUrlToBlob(dataUrl, fileTypeFallback) {
+      const parts = dataUrl.split(",");
+      const header = parts[0];
+      const data = parts[1];
+      const mimeMatch = header.match(/:(.*?);/);
+      const mime = mimeMatch ? mimeMatch[1] : (fileTypeFallback || "application/octet-stream");
+
+      const byteString = atob(data);
+      const len = byteString.length;
+      const u8arr = new Uint8Array(len);
+      for (let i = 0; i < len; i++) {
+        u8arr[i] = byteString.charCodeAt(i);
+      }
+      return new Blob([u8arr], { type: mime });
+    }
+
+    // ------------ מקצועות ------------
+
+    function renderSubjects() {
+      subjectsContainer.innerHTML = "";
+      subjects.forEach((subject) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className =
+          "btn-outline subject-btn" +
+          (subject === selectedSubject ? " active" : "");
+        btn.textContent = subject;
+        btn.addEventListener("click", () => {
+          selectedSubject = subject;
+          selectedGrade = null;
+          selectedLevel = null;
+          updateSubjectButtons();
+          renderGrades();
+          renderLevels();
+          updateSummariesView();
+        });
+        subjectsContainer.appendChild(btn);
+      });
+    }
+
+    function updateSubjectButtons() {
+      const buttons = subjectsContainer.querySelectorAll(".subject-btn");
+      buttons.forEach((btn) => {
+        if (btn.textContent === selectedSubject) {
+          btn.classList.add("active");
+        } else {
+          btn.classList.remove("active");
+        }
+      });
+    }
+
+    // ------------ כיתות ------------
+
+    function renderGrades() {
+      if (!selectedSubject) {
+        gradesContainerWrapper.style.display = "none";
+        return;
+      }
+      gradesContainerWrapper.style.display = "block";
+      gradesContainer.innerHTML = "";
+
+      grades.forEach((grade) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className =
+          "btn-outline grade-btn" + (grade === selectedGrade ? " active" : "");
+        btn.textContent = `כיתה ${grade}`;
+        btn.addEventListener("click", () => {
+          selectedGrade = grade;
+          selectedLevel = null;
+          updateGradeButtons();
+          renderLevels();
+          updateSummariesView();
+        });
+        gradesContainer.appendChild(btn);
+      });
+    }
+
+    function updateGradeButtons() {
+      const buttons = gradesContainer.querySelectorAll(".grade-btn");
+      buttons.forEach((btn) => {
+        if (btn.textContent.endsWith(selectedGrade || "")) {
+          btn.classList.add("active");
+        } else {
+          btn.classList.remove("active");
+        }
+      });
+    }
+
+    // ------------ רמות (הקבצה/יחידות) ------------
+
+    function renderLevels() {
+      const config = getLevelConfig(selectedSubject, selectedGrade);
+
+      if (!config) {
+        levelContainerWrapper.style.display = "none";
+        levelContainer.innerHTML = "";
+        selectedLevel = null;
+        return;
+      }
+
+      levelContainerWrapper.style.display = "block";
+      levelLabel.textContent = config.label;
+      levelContainer.innerHTML = "";
+
+      config.options.forEach((opt) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className =
+          "btn-outline level-btn" + (opt === selectedLevel ? " active" : "");
+        btn.textContent = opt;
+        btn.addEventListener("click", () => {
+          selectedLevel = opt;
+          updateLevelButtons();
+          updateSummariesView();
+        });
+        levelContainer.appendChild(btn);
+      });
+    }
+
+    function updateLevelButtons() {
+      const buttons = levelContainer.querySelectorAll(".level-btn");
+      buttons.forEach((btn) => {
+        if (btn.textContent === selectedLevel) {
+          btn.classList.add("active");
+        } else {
+          btn.classList.remove("active");
+        }
+      });
+    }
+
+    // ------------ מחיקת סיכום ------------
+
+    function deleteSummary(id) {
+      const ok = confirm("בטוח שברצונך למחוק את הסיכום?");
+      if (!ok) return;
+
+      const index = summaries.findIndex((s) => s.id === id);
+      if (index !== -1) {
+        summaries.splice(index, 1);
+        saveSummariesToStorage();
+        updateSummariesView();
+      }
+    }
+
+    // ------------ הצגת סיכומים ------------
+
+    function updateSummariesView() {
+      const hasSubject = !!selectedSubject;
+      const hasGrade = !!selectedGrade;
+      const levelConfig = getLevelConfig(selectedSubject, selectedGrade);
+      const needsLevel = !!levelConfig;
+
+      if (!hasSubject) {
+        currentSelection.style.display = "none";
+        summariesContainer.innerHTML = "";
+        emptyState.style.display = "block";
+        emptyState.textContent = "בחר מקצוע כדי לראות סיכומים.";
+        return;
+      }
+
+      if (!hasGrade) {
+        currentSelection.style.display = "block";
+        currentSelection.innerHTML = `
+          נבחר מקצוע <span class="tag">${selectedSubject}</span>
+          &mdash; בחר כיתה כדי לראות את הסיכומים המתאימים.
+        `;
+        summariesContainer.innerHTML = "";
+        emptyState.style.display = "block";
+        emptyState.textContent = "עדיין לא נבחרה כיתה.";
+        return;
+      }
+
+      let selectionHTML = `
+        נבחר מקצוע <span class="tag">${selectedSubject}</span>
+        וכיתה <span class="tag">כיתה ${selectedGrade}</span>
+      `;
+
+      if (needsLevel) {
+        if (!selectedLevel) {
+          currentSelection.style.display = "block";
+          currentSelection.innerHTML =
+            selectionHTML +
+            ` &mdash; עכשיו בחר רמה (${levelConfig.type === "stream" ? "הקבצה" : "יחידות"}).`;
+          summariesContainer.innerHTML = "";
+          emptyState.style.display = "block";
+          emptyState.textContent =
+            "בחר הקבצה / מספר יחידות כדי לראות את הסיכומים.";
+          return;
+        } else {
+          selectionHTML += ` ורמה <span class="tag">${selectedLevel}</span>`;
+        }
+      }
+
+      currentSelection.style.display = "block";
+      currentSelection.innerHTML = selectionHTML;
+
+      const filtered = summaries.filter(
+        (s) =>
+          s.subject === selectedSubject &&
+          s.grade === selectedGrade &&
+          (!needsLevel || s.level === selectedLevel)
+      );
+
+      summariesContainer.innerHTML = "";
+
+      if (filtered.length === 0) {
+        emptyState.style.display = "block";
+        emptyState.textContent =
+          "אין עדיין סיכומים למקצוע, כיתה ורמה האלה. אפשר להעלות סיכום (אזור מנהל למעלה 👆)";
+        return;
+      }
+
+      emptyState.style.display = "none";
+
+      filtered.forEach((summary) => {
+        const item = document.createElement("div");
+        item.className = "summary-item";
+
+        const left = document.createElement("div");
+        const title = document.createElement("div");
+        title.textContent = summary.title;
+        title.style.fontWeight = "600";
+        title.style.fontSize = "0.9rem";
+
+        const meta = document.createElement("div");
+        meta.className = "summary-meta";
+        let metaText = `מקצוע: ${summary.subject} · כיתה: ${summary.grade}`;
+        if (summary.level) {
+          metaText += ` · ${summary.level}`;
+        }
+        meta.textContent = metaText;
+
+        left.appendChild(title);
+        left.appendChild(meta);
+
+        const actions = document.createElement("div");
+        actions.className = "summary-actions";
+
+        const downloadBtn = document.createElement("a");
+        downloadBtn.textContent = "הורדת סיכום";
+        downloadBtn.className = "btn-primary";
+        downloadBtn.style.textDecoration = "none";
+        downloadBtn.style.fontSize = "0.8rem";
+
+        try {
+          const blob = dataUrlToBlob(summary.fileDataUrl, summary.fileType);
+          const url = URL.createObjectURL(blob);
+          downloadBtn.href = url;
+          downloadBtn.download = summary.fileName;
+        } catch (err) {
+          downloadBtn.textContent = "לא ניתן להוריד (שגיאה)";
+          downloadBtn.href = "#";
+        }
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "btn-danger";
+        deleteBtn.textContent = "מחק";
+        deleteBtn.style.fontSize = "0.8rem";
+        deleteBtn.addEventListener("click", () => deleteSummary(summary.id));
+
+        actions.appendChild(downloadBtn);
+        actions.appendChild(deleteBtn);
+
+        item.appendChild(left);
+        item.appendChild(actions);
+        summariesContainer.appendChild(item);
+      });
+    }
+
+    // ------------ העלאת סיכום ------------
+
+    uploadForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      if (!isAdmin) {
+        alert("רק מנהל יכול להעלות סיכומים.");
+        return;
+      }
+
+      const file = summaryFileInput.files[0];
+      const title = summaryTitleInput.value.trim();
+      const subject = summarySubjectSelect.value;
+      const grade = summaryGradeSelect.value;
+      const level = summaryLevelSelect.value || null;
+
+      if (!file || !title || !subject || !grade) {
+        alert("חייבים למלא את כל השדות (מלבד רמה אם לא רלוונטי) ולהעלות קובץ.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function (ev) {
+        const fileDataUrl = ev.target.result;
+
+        const summary = {
+          id: Date.now(),
+          title,
+          subject,
+          grade,
+          level,
+          fileName: file.name,
+          fileType: file.type || "application/octet-stream",
+          fileDataUrl
+        };
+
+        summaries.push(summary);
+        saveSummariesToStorage();
+
+        const sameSubject = subject === selectedSubject;
+        const sameGrade = grade === selectedGrade;
+        const levelConfig = getLevelConfig(subject, grade);
+        const needsLevel = !!levelConfig;
+        const sameLevel =
+          !needsLevel ||
+          level === selectedLevel ||
+          (!level && !selectedLevel);
+
+        if (sameSubject && sameGrade && sameLevel) {
+          updateSummariesView();
+        }
+
+        uploadForm.reset();
+        updateUploadLevelOptions();
+        alert("הסיכום נוסף בהצלחה! 🎉");
+      };
+
+      reader.readAsDataURL(file);
+    });
+
+    // ------------ אתחול ------------
+
+    function init() {
+      loadSummariesFromStorage();
+      renderSubjects();
+      updateSummariesView();
+      updateUploadLevelOptions();
+      updateAdminView();
+    }
+
+    init();
+</script>
+</body>
+</html>
