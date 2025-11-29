@@ -53,40 +53,18 @@
           font-size: 1.2rem;
         }
 
-        .form-row {
+        .subjects-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+          gap: 0.6rem;
+          margin-top: 0.6rem;
+        }
+
+        .grades-row {
           display: flex;
           flex-wrap: wrap;
-          gap: 0.75rem;
-          margin-bottom: 0.75rem;
-        }
-
-        label {
-          font-size: 0.85rem;
-          display: block;
-          margin-bottom: 0.25rem;
-          font-weight: 600;
-        }
-
-        input[type="text"],
-        input[type="password"],
-        select {
-          padding: 0.45rem 0.6rem;
-          border-radius: 0.5rem;
-          border: 1px solid #d1d5db;
-          min-width: 160px;
-          font-size: 0.9rem;
-          outline: none;
-        }
-
-        input[type="text"]:focus,
-        input[type="password"]:focus,
-        select:focus {
-          border-color: #6366f1;
-          box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.2);
-        }
-
-        input[type="file"] {
-          font-size: 0.85rem;
+          gap: 0.4rem;
+          margin: 0.6rem 0 0.4rem;
         }
 
         button {
@@ -100,27 +78,14 @@
           align-items: center;
           gap: 0.3rem;
           white-space: nowrap;
+          background: white;
+          color: #111827;
+          border: 1px solid #d1d5db;
         }
 
         button:active {
           transform: scale(0.97);
           box-shadow: none;
-        }
-
-        .btn-primary {
-          background: #6366f1;
-          color: white;
-          box-shadow: 0 1px 4px rgba(79, 70, 229, 0.4);
-        }
-
-        .btn-primary:hover {
-          background: #4f46e5;
-        }
-
-        .btn-outline {
-          background: white;
-          color: #111827;
-          border: 1px solid #d1d5db;
         }
 
         .btn-outline.active {
@@ -129,33 +94,11 @@
           border-color: #111827;
         }
 
-        .btn-outline:hover {
-          background: #f3f4f6;
-        }
-
-        .btn-danger {
-          background: #fee2e2;
-          color: #b91c1c;
-          border: 1px solid #fecaca;
-          box-shadow: none;
-        }
-
-        .btn-danger:hover {
-          background: #fecaca;
-        }
-
-        .subjects-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-          gap: 0.6rem;
-          margin-top: 0.6rem;
-        }
-
-        .grades-row {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.4rem;
-          margin: 0.6rem 0 0.4rem;
+        .btn-primary {
+          background: #6366f1;
+          color: white;
+          border-color: transparent;
+          box-shadow: 0 1px 4px rgba(79, 70, 229, 0.4);
         }
 
         .summary-list {
@@ -173,12 +116,6 @@
           justify-content: space-between;
           align-items: center;
           gap: 0.6rem;
-        }
-
-        .summary-actions {
-          display: flex;
-          gap: 0.4rem;
-          align-items: center;
         }
 
         .summary-meta {
@@ -201,10 +138,8 @@
           margin-left: 0.3rem;
         }
 
-        .note {
-          font-size: 0.8rem;
-          color: #6b7280;
-          margin-top: 0.4rem;
+        a.summary-link {
+          text-decoration: none;
         }
 
         @media (max-width: 600px) {
@@ -224,91 +159,20 @@
 <body>
 <header>
     <h1>ללמוד בקל</h1>
-    <p>מעלים סיכום → בוחרים מקצוע, כיתה ורמה → לומדים למבחן בכיף 😎</p>
+    <p>בוחרים מקצוע, כיתה ורמה – ומקבלים סיכומים מוכנים להורדה 📚</p>
 </header>
 
 <main>
-    <!-- אזור מנהל + העלאת סיכום -->
-    <section class="card" id="upload-section">
-        <h2>אזור מנהל – העלאת סיכומים</h2>
-
-        <!-- טופס כניסת מנהל -->
-        <div id="adminLoginSection">
-            <form id="adminLoginForm" class="form-row">
-                <div>
-                    <label for="adminPasswordInput">סיסמת מנהל</label>
-                    <input id="adminPasswordInput" type="password" placeholder="הכנס סיסמה..." required />
-                </div>
-                <div style="display:flex;align-items:flex-end;">
-                    <button type="submit" class="btn-primary">כניסת מנהל</button>
-                </div>
-            </form>
-            <p class="note">
-                הערה: בקובץ כזה הסיסמה עדיין נמצאת בקוד, אבל לתרגול / פרויקט אישי זה מספיק.
-                לאבטחה אמיתית צריך שרת (כמו שהסברתי קודם).
-            </p>
-        </div>
-
-        <!-- טופס העלאת סיכום (מוסתר עד שהמנהל נכנס) -->
-        <form id="uploadForm" style="display:none;">
-            <div class="form-row">
-                <div>
-                    <label for="summaryFile">קובץ סיכום (Word / PDF)</label>
-                    <input id="summaryFile" type="file" accept=".doc,.docx,.pdf" required />
-                </div>
-
-                <div>
-                    <label for="summaryTitle">שם הסיכום / נושא</label>
-                    <input id="summaryTitle" type="text" placeholder="למשל: Present Simple – סיכום למבחן" required />
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div>
-                    <label for="summarySubject">מקצוע</label>
-                    <select id="summarySubject" required>
-                        <option value="">בחר מקצוע…</option>
-                        <option>אנגלית</option>
-                        <option>מתמטיקה</option>
-                        <option>היסטוריה</option>
-                        <option>ספרות</option>
-                        <option>תנ&quot;ך</option>
-                        <option>פיזיקה</option>
-                        <option>כימיה</option>
-                        <option>ביולוגיה</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="summaryGrade">לכיתה</label>
-                    <select id="summaryGrade" required>
-                        <option value="">בחר כיתה…</option>
-                        <option>ז</option>
-                        <option>ח</option>
-                        <option>ט</option>
-                        <option>י</option>
-                        <option>י&quot;א</option>
-                        <option>י&quot;ב</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="summaryLevel">הקבצה / יחידות (אם רלוונטי)</label>
-                    <select id="summaryLevel">
-                        <option value="">ללא / לא רלוונטי</option>
-                    </select>
-                </div>
-            </div>
-
-            <button type="submit" class="btn-primary">הוסף סיכום</button>
-            <p class="note">
-                * הסיכומים נשמרים בדפדפן (localStorage) במחשב שבו אתה עובד.
-                במחשבים אחרים לא יראו את מה ששמרת, אלא אם תעביר להם קובץ אחר.
-            </p>
-        </form>
+    <section class="card">
+        <h2>איך זה עובד?</h2>
+        <p style="font-size:0.85rem;color:#4b5563;">
+            קבצי הסיכומים נמצאים בתיקייה <code>summaries</code> בגיטהאב.<br>
+            כאן למטה, ברשימה <code>summariesData</code>, אנחנו מגדירים:
+            לאיזה מקצוע / כיתה / רמה כל קובץ שייך.<br>
+            <strong>חשוב:</strong> השדה <code>fileUrl</code> חייב להיות בדיוק אותו שם קובץ כמו בגיטהאב.
+        </p>
     </section>
 
-    <!-- בחירת מקצוע וכיתה -->
     <section class="card">
         <h2>בחירת מקצוע, כיתה ורמה</h2>
 
@@ -337,65 +201,289 @@
 </main>
 
 <script>
-    // ------------ הגדרת סיסמה ------------
-    const ADMIN_PASSWORD = "696000";
+    // ----------------------------------------------------
+    //  כאן מגדירים את כל הסיכומים (מיפוי קובץ -> מקצוע/כיתה)
+    // ----------------------------------------------------
+    // שים לב:
+    // 1. fileUrl = "summaries/שם-הקובץ-המדויק-בגיטהאב.docx"
+    // 2. אתה יכול או:
+    //    - לשנות כאן את השם כדי שיתאים לקובץ שלך
+    //    - או לשנות בגיטהאב את שם הקובץ לשם שכתוב כאן
+    // 3. grade = "ז","ח","ט","י","י\"א","י\"ב"
+    // 4. level במתמטיקה/אנגלית:
+    //    - ח/ט  → "הקבצה א'"/"הקבצה ב'"/"הקבצה ג'"
+    //    - י–י"ב → "3 יחידות"/"4 יחידות"/"5 יחידות"
+    //    - בשאר המקצועות אפשר "" (ריק)
 
-    // ------------ נתונים בסיסיים ------------
+    const summariesData = [
+      // ---------- היסטוריה / נושאים למבחן ----------
+      {
+        id: 1,
+        subject: "היסטוריה",
+        grade: "ט",
+        level: "",
+        title: "נושאים למבחן – מחצית א (חלק 1)",
+        fileUrl: "summaries/history_topics_test1_part1.docx" // החלף לשם הקובץ האמיתי
+      },
+      {
+        id: 2,
+        subject: "היסטוריה",
+        grade: "ט",
+        level: "",
+        title: "נושאים למבחן – מחצית א (חלק 2)",
+        fileUrl: "summaries/history_topics_test1_part2.docx"
+      },
+      {
+        id: 3,
+        subject: "היסטוריה",
+        grade: "ט",
+        level: "",
+        title: "נושאים למבחן – מחצית א (גרסה מלאה)",
+        fileUrl: "summaries/history_topics_test1_full.docx"
+      },
+
+      // ---------- אנגלית – כיתה ט, הקבצות ----------
+      {
+        id: 4,
+        subject: "אנגלית",
+        grade: "ט",
+        level: "הקבצה ב'",
+        title: "9B Practice",
+        fileUrl: "summaries/9B Practice.docx"
+      },
+      {
+        id: 5,
+        subject: "אנגלית",
+        grade: "ט",
+        level: "הקבצה א'",
+        title: "Example עבודה לדוגמה (1)",
+        fileUrl: "summaries/example (1).docx"
+      },
+      {
+        id: 6,
+        subject: "אנגלית",
+        grade: "ט",
+        level: "הקבצה א'",
+        title: "Example עבודה לדוגמה",
+        fileUrl: "summaries/example.docx"
+      },
+      {
+        id: 7,
+        subject: "אנגלית",
+        grade: "ט",
+        level: "הקבצה א'",
+        title: "Grade 9A practice (1)",
+        fileUrl: "summaries/Grade 9A practice (1).docx"
+      },
+      {
+        id: 8,
+        subject: "אנגלית",
+        grade: "ט",
+        level: "הקבצה א'",
+        title: "Grade 9A practice (2)",
+        fileUrl: "summaries/Grade 9A practice (2).docx"
+      },
+      {
+        id: 9,
+        subject: "אנגלית",
+        grade: "ט",
+        level: "הקבצה א'",
+        title: "Grade 9A practice (3)",
+        fileUrl: "summaries/Grade 9A practice (3).docx"
+      },
+      {
+        id: 10,
+        subject: "אנגלית",
+        grade: "ט",
+        level: "הקבצה א'",
+        title: "Grade 9A practice – חזרה כללית",
+        fileUrl: "summaries/Grade 9A practice.docx"
+      },
+
+      // ---------- אזרחות ----------
+      {
+        id: 11,
+        subject: "אזרחות",
+        grade: "ט",
+        level: "",
+        title: "דף הכנה לבחינה באזרחות (1)",
+        fileUrl: "summaries/civics_exam_prep_1.docx"
+      },
+      {
+        id: 12,
+        subject: "אזרחות",
+        grade: "ט",
+        level: "",
+        title: "דף הכנה לבחינה באזרחות (2)",
+        fileUrl: "summaries/civics_exam_prep_2.docx"
+      },
+      {
+        id: 13,
+        subject: "אזרחות",
+        grade: "ט",
+        level: "",
+        title: "דף הכנה לבחינה באזרחות – גרסה מלאה",
+        fileUrl: "summaries/civics_exam_prep_full.docx"
+      },
+      {
+        id: 14,
+        subject: "אזרחות",
+        grade: "ט",
+        level: "",
+        title: "דף סטרים / חידות לכיתה",
+        fileUrl: "summaries/civics_riddles_1.docx"
+      },
+      {
+        id: 15,
+        subject: "אזרחות",
+        grade: "ט",
+        level: "",
+        title: "לוח אירועים – הכנה למבחן",
+        fileUrl: "summaries/civics_events_board.docx"
+      },
+
+      // ---------- תנ\"ך – יונה ----------
+      {
+        id: 16,
+        subject: "תנ\"ך",
+        grade: "ט",
+        level: "",
+        title: "יונה – עבודה מלאה (1)",
+        fileUrl: "summaries/jonah_full_1.docx"
+      },
+      {
+        id: 17,
+        subject: "תנ\"ך",
+        grade: "ט",
+        level: "",
+        title: "יונה – עבודה מלאה (2)",
+        fileUrl: "summaries/jonah_full_2.docx"
+      },
+      {
+        id: 18,
+        subject: "תנ\"ך",
+        grade: "ט",
+        level: "",
+        title: "יונה – עבודה מלאה (3)",
+        fileUrl: "summaries/jonah_full_3.docx"
+      },
+      {
+        id: 19,
+        subject: "תנ\"ך",
+        grade: "ט",
+        level: "",
+        title: "יונה – עבודה מלאה (4)",
+        fileUrl: "summaries/jonah_full_4.docx"
+      },
+      {
+        id: 20,
+        subject: "תנ\"ך",
+        grade: "ט",
+        level: "",
+        title: "יונה – עבודה קבוצתית (1)",
+        fileUrl: "summaries/jonah_group_1.docx"
+      },
+      {
+        id: 21,
+        subject: "תנ\"ך",
+        grade: "ט",
+        level: "",
+        title: "יונה – עבודה קבוצתית (2)",
+        fileUrl: "summaries/jonah_group_2.docx"
+      },
+
+      // ---------- תנ\"ך – מלכים ----------
+      {
+        id: 22,
+        subject: "תנ\"ך",
+        grade: "ט",
+        level: "",
+        title: "מלכים – דף עבודה (1)",
+        fileUrl: "summaries/kings_1.docx"
+      },
+      {
+        id: 23,
+        subject: "תנ\"ך",
+        grade: "ט",
+        level: "",
+        title: "מלכים – דף עבודה (2)",
+        fileUrl: "summaries/kings_2.docx"
+      },
+      {
+        id: 24,
+        subject: "תנ\"ך",
+        grade: "ט",
+        level: "",
+        title: "מלכים – דף עבודה (3)",
+        fileUrl: "summaries/kings_3.docx"
+      },
+      {
+        id: 25,
+        subject: "תנ\"ך",
+        grade: "ט",
+        level: "",
+        title: "מלכים – סיכום",
+        fileUrl: "summaries/kings_summary.docx"
+      },
+
+      // ---------- מדעים ----------
+      {
+        id: 26,
+        subject: "מדעים",
+        grade: "ט",
+        level: "",
+        title: "סיכום החומר למבחן במדעים (1)",
+        fileUrl: "summaries/science_exam_summary_1.docx"
+      },
+      {
+        id: 27,
+        subject: "מדעים",
+        grade: "ט",
+        level: "",
+        title: "סיכום החומר למבחן במדעים (2)",
+        fileUrl: "summaries/science_exam_summary_2.docx"
+      },
+      {
+        id: 28,
+        subject: "מדעים",
+        grade: "ט",
+        level: "",
+        title: "סיכום החומר למבחן במדעים (3)",
+        fileUrl: "summaries/science_exam_summary_3.docx"
+      }
+    ];
+
+    // ----------- רשימת מקצועות / כיתות -----------
 
     const subjects = [
       "אנגלית",
       "מתמטיקה",
       "היסטוריה",
-      "ספרות",
+      "אזרחות",
       "תנ\"ך",
-      "פיזיקה",
-      "כימיה",
-      "ביולוגיה"
+      "מדעים"
     ];
 
     const grades = ["ז", "ח", "ט", "י", "י\"א", "י\"ב"];
 
-    // summaries נטען מ-localStorage
-    const summaries = [];
-
     let selectedSubject = null;
     let selectedGrade = null;
-    let selectedLevel = null; // הקבצה / יחידות אם רלוונטי
-
-    let isAdmin = false;
-
-    // ------------ DOM ------------
+    let selectedLevel = null;
 
     const subjectsContainer = document.getElementById("subjectsContainer");
     const gradesContainerWrapper = document.getElementById("gradesContainerWrapper");
     const gradesContainer = document.getElementById("gradesContainer");
-
     const levelContainerWrapper = document.getElementById("levelContainerWrapper");
     const levelContainer = document.getElementById("levelContainer");
     const levelLabel = document.getElementById("levelLabel");
-
     const summariesContainer = document.getElementById("summariesContainer");
     const emptyState = document.getElementById("emptyState");
     const currentSelection = document.getElementById("currentSelection");
-
-    const adminLoginSection = document.getElementById("adminLoginSection");
-    const adminLoginForm = document.getElementById("adminLoginForm");
-    const adminPasswordInput = document.getElementById("adminPasswordInput");
-
-    const uploadForm = document.getElementById("uploadForm");
-    const summaryFileInput = document.getElementById("summaryFile");
-    const summaryTitleInput = document.getElementById("summaryTitle");
-    const summarySubjectSelect = document.getElementById("summarySubject");
-    const summaryGradeSelect = document.getElementById("summaryGrade");
-    const summaryLevelSelect = document.getElementById("summaryLevel");
-
-    // ------------ רמות: הקבצה / יחידות ------------
 
     function getLevelConfig(subject, grade) {
       const isMathOrEnglish = subject === "מתמטיקה" || subject === "אנגלית";
       if (!isMathOrEnglish || !grade) return null;
 
-      // ח' + ט' – הקבצות א/ב/ג
       if (grade === "ח" || grade === "ט") {
         return {
           type: "stream",
@@ -404,7 +492,6 @@
         };
       }
 
-      // י' + י"א + י"ב – 3/4/5 יחידות
       if (grade === "י" || grade === "י\"א" || grade === "י\"ב") {
         return {
           type: "units",
@@ -415,102 +502,6 @@
 
       return null;
     }
-
-    // upload: לעדכן אפשרויות רמה
-    function updateUploadLevelOptions() {
-      const subject = summarySubjectSelect.value;
-      const grade = summaryGradeSelect.value;
-      const config = getLevelConfig(subject, grade);
-
-      summaryLevelSelect.innerHTML = "";
-      const defaultOpt = document.createElement("option");
-      defaultOpt.value = "";
-      defaultOpt.textContent = "ללא / לא רלוונטי";
-      summaryLevelSelect.appendChild(defaultOpt);
-
-      if (!config) return;
-
-      config.options.forEach((opt) => {
-        const o = document.createElement("option");
-        o.value = opt;
-        o.textContent = opt;
-        summaryLevelSelect.appendChild(o);
-      });
-    }
-
-    summarySubjectSelect.addEventListener("change", updateUploadLevelOptions);
-    summaryGradeSelect.addEventListener("change", updateUploadLevelOptions);
-
-    // ------------ Admin UI ------------
-
-    function updateAdminView() {
-      if (isAdmin) {
-        adminLoginSection.style.display = "none";
-        uploadForm.style.display = "block";
-      } else {
-        adminLoginSection.style.display = "block";
-        uploadForm.style.display = "none";
-      }
-    }
-
-    adminLoginForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const pwd = adminPasswordInput.value;
-      if (pwd === ADMIN_PASSWORD) {
-        isAdmin = true;
-        updateAdminView();
-        adminPasswordInput.value = "";
-        alert("נכנסת כאדמין ✔️");
-      } else {
-        alert("סיסמה שגויה ❌");
-      }
-    });
-
-    // ------------ שמירה וטעינה מ-localStorage ------------
-
-    function saveSummariesToStorage() {
-      try {
-        localStorage.setItem("summaries", JSON.stringify(summaries));
-      } catch (err) {
-        console.error("שמירה ל-localStorage נכשלה:", err);
-      }
-    }
-
-    function loadSummariesFromStorage() {
-      try {
-        const raw = localStorage.getItem("summaries");
-        if (!raw) return;
-        const arr = JSON.parse(raw);
-        if (Array.isArray(arr)) {
-          arr.forEach((item) => {
-            if (item && item.fileDataUrl && item.fileName) {
-              summaries.push(item);
-            }
-          });
-        }
-      } catch (err) {
-        console.error("טעינה מ-localStorage נכשלה:", err);
-      }
-    }
-
-    // המרה מ-dataURL ל-Blob בשביל הורדה
-    function dataUrlToBlob(dataUrl, fileTypeFallback) {
-      const parts = dataUrl.split(",");
-      const header = parts[0];
-      const data = parts[1];
-      const mimeMatch = header.match(/:(.*?);/);
-      const mime = mimeMatch ? mimeMatch[1] : (fileTypeFallback || "application/octet-stream");
-
-      const byteString = atob(data);
-      const len = byteString.length;
-      const u8arr = new Uint8Array(len);
-      for (let i = 0; i < len; i++) {
-        u8arr[i] = byteString.charCodeAt(i);
-      }
-      return new Blob([u8arr], { type: mime });
-    }
-
-    // ------------ מקצועות ------------
 
     function renderSubjects() {
       subjectsContainer.innerHTML = "";
@@ -544,8 +535,6 @@
         }
       });
     }
-
-    // ------------ כיתות ------------
 
     function renderGrades() {
       if (!selectedSubject) {
@@ -582,8 +571,6 @@
         }
       });
     }
-
-    // ------------ רמות (הקבצה/יחידות) ------------
 
     function renderLevels() {
       const config = getLevelConfig(selectedSubject, selectedGrade);
@@ -624,22 +611,6 @@
         }
       });
     }
-
-    // ------------ מחיקת סיכום ------------
-
-    function deleteSummary(id) {
-      const ok = confirm("בטוח שברצונך למחוק את הסיכום?");
-      if (!ok) return;
-
-      const index = summaries.findIndex((s) => s.id === id);
-      if (index !== -1) {
-        summaries.splice(index, 1);
-        saveSummariesToStorage();
-        updateSummariesView();
-      }
-    }
-
-    // ------------ הצגת סיכומים ------------
 
     function updateSummariesView() {
       const hasSubject = !!selectedSubject;
@@ -691,19 +662,22 @@
       currentSelection.style.display = "block";
       currentSelection.innerHTML = selectionHTML;
 
-      const filtered = summaries.filter(
-        (s) =>
-          s.subject === selectedSubject &&
-          s.grade === selectedGrade &&
-          (!needsLevel || s.level === selectedLevel)
-      );
+      const filtered = summariesData.filter((s) => {
+        if (s.subject !== selectedSubject) return false;
+        if (s.grade !== selectedGrade) return false;
+        if (needsLevel) {
+          return s.level === selectedLevel;
+        } else {
+          return true;
+        }
+      });
 
       summariesContainer.innerHTML = "";
 
       if (filtered.length === 0) {
         emptyState.style.display = "block";
         emptyState.textContent =
-          "אין עדיין סיכומים למקצוע, כיתה ורמה האלה. אפשר להעלות סיכום (אזור מנהל למעלה 👆)";
+          "אין עדיין סיכומים למקצוע, כיתה ורמה האלה.";
         return;
       }
 
@@ -730,109 +704,27 @@
         left.appendChild(title);
         left.appendChild(meta);
 
-        const actions = document.createElement("div");
-        actions.className = "summary-actions";
-
-        const downloadBtn = document.createElement("a");
-        downloadBtn.textContent = "הורדת סיכום";
-        downloadBtn.className = "btn-primary";
-        downloadBtn.style.textDecoration = "none";
-        downloadBtn.style.fontSize = "0.8rem";
-
-        try {
-          const blob = dataUrlToBlob(summary.fileDataUrl, summary.fileType);
-          const url = URL.createObjectURL(blob);
-          downloadBtn.href = url;
-          downloadBtn.download = summary.fileName;
-        } catch (err) {
-          downloadBtn.textContent = "לא ניתן להוריד (שגיאה)";
-          downloadBtn.href = "#";
-        }
-
-        const deleteBtn = document.createElement("button");
-        deleteBtn.type = "button";
-        deleteBtn.className = "btn-danger";
-        deleteBtn.textContent = "מחק";
-        deleteBtn.style.fontSize = "0.8rem";
-        deleteBtn.addEventListener("click", () => deleteSummary(summary.id));
-
-        actions.appendChild(downloadBtn);
-        actions.appendChild(deleteBtn);
+        const right = document.createElement("div");
+        const link = document.createElement("a");
+        link.className = "summary-link";
+        link.href = summary.fileUrl;
+        link.target = "_blank";
+        link.rel = "noopener";
+        const btn = document.createElement("button");
+        btn.className = "btn-primary";
+        btn.textContent = "הורדת סיכום";
+        link.appendChild(btn);
+        right.appendChild(link);
 
         item.appendChild(left);
-        item.appendChild(actions);
+        item.appendChild(right);
         summariesContainer.appendChild(item);
       });
     }
 
-    // ------------ העלאת סיכום ------------
-
-    uploadForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-
-      if (!isAdmin) {
-        alert("רק מנהל יכול להעלות סיכומים.");
-        return;
-      }
-
-      const file = summaryFileInput.files[0];
-      const title = summaryTitleInput.value.trim();
-      const subject = summarySubjectSelect.value;
-      const grade = summaryGradeSelect.value;
-      const level = summaryLevelSelect.value || null;
-
-      if (!file || !title || !subject || !grade) {
-        alert("חייבים למלא את כל השדות (מלבד רמה אם לא רלוונטי) ולהעלות קובץ.");
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = function (ev) {
-        const fileDataUrl = ev.target.result;
-
-        const summary = {
-          id: Date.now(),
-          title,
-          subject,
-          grade,
-          level,
-          fileName: file.name,
-          fileType: file.type || "application/octet-stream",
-          fileDataUrl
-        };
-
-        summaries.push(summary);
-        saveSummariesToStorage();
-
-        const sameSubject = subject === selectedSubject;
-        const sameGrade = grade === selectedGrade;
-        const levelConfig = getLevelConfig(subject, grade);
-        const needsLevel = !!levelConfig;
-        const sameLevel =
-          !needsLevel ||
-          level === selectedLevel ||
-          (!level && !selectedLevel);
-
-        if (sameSubject && sameGrade && sameLevel) {
-          updateSummariesView();
-        }
-
-        uploadForm.reset();
-        updateUploadLevelOptions();
-        alert("הסיכום נוסף בהצלחה! 🎉");
-      };
-
-      reader.readAsDataURL(file);
-    });
-
-    // ------------ אתחול ------------
-
     function init() {
-      loadSummariesFromStorage();
       renderSubjects();
       updateSummariesView();
-      updateUploadLevelOptions();
-      updateAdminView();
     }
 
     init();
