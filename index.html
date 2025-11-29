@@ -839,3 +839,238 @@
 </script>
 </body>
 </html>
+lilmod-server/
+server.js
+package.json
+.env
+public/
+index.html
+uploads/   (תיווצר לבד בזמן ריצה)
+summaries.json (תיווצר לבד בזמן ריצה)
+{
+"name": "lilmod-bekal",
+"version": "1.0.0",
+"description": "ללמוד בקל - אתר סיכומים עם שרת",
+"main": "server.js",
+"scripts": {
+"start": "node server.js"
+},
+"dependencies": {
+"dotenv": "^16.4.5",
+"express": "^4.19.2",
+"express-session": "^1.17.3",
+"multer": "^1.4.5-lts.1"
+}
+}
+ADMIN_PASSWORD=696000
+SESSION_SECRET=some-long-random-secret-string
+PORT=3000
+// server.js
+require("dotenv").config();
+const express = require("express");
+const session = require("express-session");
+const multer = require("multer");
+const fs = require("fs");
+const path = require("path");
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// ----- תיקיות -----
+const PUBLIC_DIR = path.join(__dirname, "public");
+const UPLOADS_DIR = path.join(__dirname, "uploads");
+const DATA_FILE = path.join(__dirname, "summaries.json");
+
+// לוודא שתיקיית uploads קיימת
+if (!fs.existsSync(UPLOADS_DIR)) {
+fs.mkdirSync(UPLOADS_DIR);
+}
+
+// ----- טעינת סיכומים מהדיסק -----
+let summaries = [];
+
+function loadSummaries() {
+try {
+if (fs.existsSync(DATA_FILE)) {
+const raw = fs.readFileSync(DATA_FILE, "utf8");
+summaries = JSON.parse(raw);
+} else {
+summaries = [];
+}
+} catch (err) {
+console.error("Failed to load summaries:", err);
+summaries = [];
+}
+}
+
+function saveSummaries() {
+try {
+fs.writeFileSync(DATA_FILE, JSON.stringify(summaries, null, 2), "utf8");
+} catch (err) {
+console.error("Failed to save summaries:", err);
+}
+}
+
+loadSummaries();
+
+// ----- Middleware -----
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use(
+session({
+secret: process.env.SESSION_SECRET || "dev-secret",
+resave: false,
+saveUninitialized: false,
+})
+);
+
+// סטטי – הפרונט
+app.use(express.static(PUBLIC_DIR));
+
+// ----- Multer להעלאת קבצים -----
+const storage = multer.diskStorage({
+destination: function (req, file, cb) {
+cb(null, UPLOADS_DIR);
+},
+filename: function (req, file, cb) {
+const unique = Date.now() + "-" + file.originalname;
+cb(null, unique);
+},
+});
+
+const upload = multer({ storage });
+
+// ----- Middleware לבדוק אדמין -----
+function requireAdmin(req, res, next) {
+if (req.session && req.session.isAdmin) {
+return next();
+}
+return res.status(401).json({ error: "Unauthorized" });
+}
+
+// ----- API -----
+
+// כניסת אדמין
+app.post("/api/login", (req, res) => {
+const { password } = req.body;
+const adminPassword = process.env.ADMIN_PASSWORD;
+
+if (!adminPassword) {
+return res
+.status(500)
+.json({ error: "ADMIN_PASSWORD is not set on server" });
+}
+
+if (password === adminPassword) {
+req.session.isAdmin = true;
+return res.json({ success: true });
+} else {
+return res.status(401).json({ error: "Wrong password" });
+}
+});
+
+// בדיקת סטטוס אדמין
+app.get("/api/me", (req, res) => {
+res.json({ isAdmin: !!(req.session && req.session.isAdmin) });
+});
+
+// יציאה
+app.post("/api/logout", (req, res) => {
+req.session.destroy(() => {
+res.json({ success: true });
+});
+});
+
+// קבלת כל הסיכומים (לכולם)
+app.get("/api/summaries", (req, res) => {
+const safeSummaries = summaries.map((s) => ({
+id: s.id,
+title: s.title,
+subject: s.subject,
+grade: s.grade,
+level: s.level,
+fileName: s.fileName,
+}));
+res.json(safeSummaries);
+});
+
+// הורדת קובץ
+app.get("/api/summaries/:id/file", (req, res) => {
+const id = req.params.id;
+const summary = summaries.find((s) => String(s.id) === String(id));
+if (!summary) {
+return res.status(404).send("Not found");
+}
+
+const filePath = path.join(UPLOADS_DIR, summary.fileStoredName);
+if (!fs.existsSync(filePath)) {
+return res.status(404).send("File not found");
+}
+
+res.download(filePath, summary.fileName);
+});
+
+// יצירת סיכום חדש (רק אדמין)
+app.post("/api/summaries", requireAdmin, upload.single("file"), (req, res) => {
+const { title, subject, grade, level } = req.body;
+const file = req.file;
+
+if (!file || !title || !subject || !grade) {
+return res
+.status(400)
+.json({ error: "Missing fields or file (title/subject/grade/file)" });
+}
+
+const summary = {
+id: Date.now(),
+title,
+subject,
+grade,
+level: level || null,
+fileName: file.originalname,
+fileStoredName: file.filename,
+createdAt: new Date().toISOString(),
+};
+
+summaries.push(summary);
+saveSummaries();
+
+res.status(201).json({
+id: summary.id,
+title: summary.title,
+subject: summary.subject,
+grade: summary.grade,
+level: summary.level,
+fileName: summary.fileName,
+});
+});
+
+// מחיקת סיכום (רק אדמין)
+app.delete("/api/summaries/:id", requireAdmin, (req, res) => {
+const id = req.params.id;
+const index = summaries.findIndex((s) => String(s.id) === String(id));
+
+if (index === -1) {
+return res.status(404).json({ error: "Not found" });
+}
+
+const [removed] = summaries.splice(index, 1);
+saveSummaries();
+
+if (removed && removed.fileStoredName) {
+const filePath = path.join(UPLOADS_DIR, removed.fileStoredName);
+if (fs.existsSync(filePath)) {
+fs.unlink(filePath, (err) => {
+if (err) console.error("Failed to delete file:", err);
+});
+}
+}
+
+res.json({ success: true });
+});
+
+// ----- התחלת שרת -----
+app.listen(PORT, () => {
+console.log(`Server is running on http://localhost:${PORT}`);
+});
